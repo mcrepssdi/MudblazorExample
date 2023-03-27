@@ -1,0 +1,40 @@
+﻿@page "/counter"
+@using ExampleCrud.Models
+@using ExampleCrud.Data
+
+@inject DataProvider _dataProvider
+
+<PageTitle>Counter</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Counter</MudText>
+<MudText Class="mb-4">Current count: @currentCount</MudText>
+<MudButton Color="Color.Primary" Variant="Variant.Filled" 
+            @onclick="Fetch">Click me</MudButton>
+<div></div>
+<MudTable Items="@Cars" Hover="true" 
+          Breakpoint="Breakpoint.Sm" 
+          FixedFooter="true" FixedHeader="true" Height="600px">
+    <HeaderContent>
+        <MudTh>Car Desc</MudTh>
+        <MudTh>Mpg</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="CarDesc">@context.CarDesc</MudTd>
+        <MudTd DataLabel="Mpg">@context.Mpg</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 50, 100 }"/>
+    </PagerContent>
+</MudTable>
+
+
+@code {
+    private int currentCount = 0;
+    private List<Car> Cars = new();
+    
+    private async Task Fetch()
+    {
+        currentCount++;
+        Cars = await _dataProvider.GetCars("Autos");
+    }
+}
