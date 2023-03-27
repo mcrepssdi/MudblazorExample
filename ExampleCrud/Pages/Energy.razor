@@ -1,0 +1,65 @@
+﻿@page "/Energy"
+@using ExampleCrud.Data
+@using ExampleCrud.Models
+
+@inject DataProvider _dataProvider
+
+<PageTitle>Energy Consumption</PageTitle>
+<MudButton Color="Color.Primary" Variant="Variant.Filled" 
+            @onclick="GetConsumption">Consumption</MudButton>
+
+<MudTable Items="@energy" Hover="true" 
+          Breakpoint="Breakpoint.Sm" 
+          FixedFooter="true" FixedHeader="true" Height="600px">
+    <HeaderContent>
+        <MudTh>Year</MudTh>
+        <MudTh>Month</MudTh>
+        <MudTh>State</MudTh>
+        <MudTh>Producer ID</MudTh>
+        <MudTh>Source Units</MudTh>
+        <MudTh>Consumption</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Year">@context.Year</MudTd>
+        <MudTd DataLabel="Month">@context.Month</MudTd>
+        <MudTd DataLabel="State">@context.State</MudTd>
+        <MudTd DataLabel="ProducerId">@context.ProducerId</MudTd>
+        <MudTd DataLabel="SourceUnits">@context.EnergySourceUnits</MudTd>
+        <MudTd DataLabel="Consumption">@context.Consumption.Trim()</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 25, 50 }"/>
+    </PagerContent>
+</MudTable>
+
+
+
+@code {
+
+    private List<EnergyConsumption> energy = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            energy = await _dataProvider.GetConsumption("Lab1");
+            StateHasChanged();
+        }
+        
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    public async Task GetConsumption()
+    {
+        energy = await _dataProvider.GetConsumption("Lab1");
+    }
+    
+    
+    
+    
+}
