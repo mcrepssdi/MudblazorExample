@@ -49,4 +49,27 @@ public class DataProvider
         }
         return Task.FromResult(results);
     }
+
+    public List<double> GetRandomNumbers(string db)
+    {
+        List<double> results = new();
+        string sql = @"SELECT FLOOR(RAND()*(1000-5)+5) AS Num;";
+        using SqlConnection conn = new(ConnStr);
+        try
+        {
+            conn.Open();
+            conn.ChangeDatabase(db);
+            for (int i = 0; i < 8; i++)
+            {
+                double num = conn.QueryFirst<double>(sql);
+                results.Add(num);
+            }
+        }
+        catch (Exception e)
+        {
+            results = new List<double>();
+        }
+
+        return results;
+    }
 }

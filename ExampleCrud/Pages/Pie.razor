@@ -1,7 +1,9 @@
 ﻿@page "/Pie"
+@using ExampleCrud.Data
+@inject DataProvider dp;
 
 <MudPaper Class="pa-4">
-    <MudChart ChartType="ChartType.Pie" InputData="@_data" @bind-SelectedIndex="_index" InputLabels="@_labels" Width="300px" Height="300px" />
+    <MudChart ChartType="ChartType.Pie" InputData="@_data" @bind-SelectedIndex="_index" InputLabels="@_labels" Width="250px" Height="250px" />
 </MudPaper>
 <MudPaper Class="pa-4 mt-2 d-flex justify-center">
     <MudButton OnClick="AddDataSize" Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
@@ -13,39 +15,54 @@
 @code {
     private int _index = -1; //default value cannot be 0 -> first selectedindex is 0.
     private int _dataSize = 4;
-    private double[] _data = { 77, 25, 20, 5 };
-    private string[] _labels = { "Uranium", "Plutonium", "Thorium", "Caesium", "Technetium", "Promethium",
-        "Polonium", "Astatine", "Radon", "Francium", "Radium", "Actinium", "Protactinium",
-        "Neptunium", "Americium", "Curium", "Berkelium", "Californium", "Einsteinium", "Mudblaznium" };
+    private double[] _data = new double[8];
+    private string[] _labels;
 
     private Random _random = new Random();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        RandomizeData();
+            
+        _labels = new string[] { "Uranium", "Plutonium", "Thorium", "Caesium", "Technetium", "Promethium",
+            "Polonium", "Astatine", "Radon", "Francium", "Radium", "Actinium", "Protactinium",
+            "Neptunium", "Americium", "Curium", "Berkelium", "Californium", "Einsteinium", "Mudblaznium" };
         
+        await base.OnInitializedAsync();
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            StateHasChanged();
+        }
+        
+        await base.OnAfterRenderAsync(firstRender);
     }
     
     void RandomizeData()
     {
-        double[] newData = new double[_dataSize];
-        for (int i = 0; i < newData.Length; i++)
-        {
-            newData[i] = _random.NextDouble() * 100; 
-        }
-        _data = newData;
+        List<double> numbers = dp.GetRandomNumbers("Lab1");
+        // double[] newData = new double[_dataSize];
+        // for (int i = 0; i < newData.Length; i++)
+        // {
+        //     newData[i] = _random.NextDouble() * 100; 
+        // }
+        _data = numbers.ToArray();
         StateHasChanged();
     }
 
     void AddDataSize()
     {
-        if (_dataSize >= 20) return;
-        _dataSize += 1;
-        RandomizeData();
+        // if (_dataSize >= 20) return;
+        // _dataSize += 1;
+        // RandomizeData();
     }
     void RemoveDataSize()
     {
-        if (_dataSize <= 0) return;
-        _dataSize -= 1;
-        RandomizeData();
+    //     if (_dataSize <= 0) return;
+    //     _dataSize -= 1;
+    //     RandomizeData();
     }
 }
