@@ -1,4 +1,5 @@
 ﻿using System.Data.SqlClient;
+using System.Text;
 using Dapper;
 using ExampleCrud.Models;
 
@@ -71,5 +72,31 @@ public class DataProvider
         }
 
         return results;
+    }
+
+    public List<DataSeries> GetAveragesByYear(string defaultDb)
+    {
+        using SqlConnection conn = new(ConnStr);
+        try
+        {
+
+            StringBuilder sb = new();
+            sb.AppendLine("SELECT Year As Label, FLOOR(AVG(CAST(Value as float)) / 100000) as Value ");
+            sb.AppendLine("FROM dbo.[effects-of-covid-19-on-trade-at-15-december-2021-provisional] ");
+            sb.AppendLine("Group By Year ");
+            sb.AppendLine("Order BY Year");
+            
+            conn.Open();
+            conn.ChangeDatabase(defaultDb); 
+            List<DataSeries> results = conn.Query<DataSeries>(sb.ToString()).ToList();
+            
+            return results;
+        }
+        catch (Exception e)
+        {
+            
+        }
+        
+        return new List<DataSeries>();
     }
 }

@@ -1,0 +1,54 @@
+﻿@page "/FooBar"
+@using ExampleCrud.Data
+@using ExampleCrud.Models
+
+@inject DataProvider _dataProvider
+<h3>FooBar</h3>
+<div>
+
+        <MudChart ChartType="ChartType.Bar" ChartSeries="@_series" @bind-SelectedIndex="_index"
+                  XAxisLabels="@_xAxisLabels" Width="100%" Height="350px"></MudChart>
+
+</div>
+<MudText Typo="Typo.h6">Selected portion of the chart: @_index</MudText>
+
+@code {
+    private int _index = -1; //default value cannot be 0 -> first selectedindex is 0.
+    private string[] _xAxisLabels = new string[1];
+    private List<ChartSeries> _series = new();
+    private List<DataSeries> _data;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _series = Fetch();
+            StateHasChanged();
+        }
+        
+        await base.OnAfterRenderAsync(firstRender);
+    }
+    
+    public List<ChartSeries> Fetch()
+    {
+        List<ChartSeries> results = new();
+        _data = _dataProvider.GetAveragesByYear("Lab1");
+        
+        _xAxisLabels = _xAxisLabels = (from s in _data select s.Label).ToArray();
+        ChartSeries cs = new() { Name = "AVG", Data = (from s in _data select s.Value).ToArray()};
+        
+        // for (int x = 0; x < _data.Count; x++)
+        // {
+        //     _xAxisLabels[x] = _data[x].Label;
+        //     cs.Data[x] = _data[x].Value;
+        // }
+        results.Add(cs);
+        
+        return results;
+    }
+    
+}

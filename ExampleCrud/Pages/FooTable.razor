@@ -1,0 +1,44 @@
+﻿@page "/FooTable"
+@using ExampleCrud.Data
+@using ExampleCrud.Models
+
+@inject DataProvider _dataProvider
+
+<h3>FooTable</h3>
+
+<MudTable Items="@foobar" Hover="true" 
+          Breakpoint="Breakpoint.Sm" 
+          FixedFooter="true" FixedHeader="true" Height="600px">
+    <HeaderContent>
+        <MudTh>Label</MudTh>
+        <MudTh>Value</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Year">@context.Label</MudTd>
+        <MudTd DataLabel="Value">@context.Value</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 25, 50 }"/>
+    </PagerContent>
+</MudTable>
+
+
+@code {
+    
+    private List<DataSeries> foobar = new ();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            foobar = _dataProvider.GetAveragesByYear("Lab1");
+            StateHasChanged();
+        }
+        
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}
