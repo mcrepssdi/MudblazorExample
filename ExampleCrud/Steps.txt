@@ -1,0 +1,7 @@
+﻿Step 1: Added Razor Page
+Step 2: Inject DataProvider in Razor Page
+Step 3: Write Query In MSSMS
+Step 4: Identify data type and build corresponding model(s)
+Step 5: Added Query to DataProvider
+Step 6: Add Method to Fetch Data and load variables for razor page to render
+Step 7: Hook up chart to current data set
